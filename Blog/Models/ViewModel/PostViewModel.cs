@@ -12,7 +12,7 @@ namespace Blog.Models.ViewModel
 
 
         [Required]
-        [StringLength(50, MinimumLength = 10, ErrorMessage = "Content cannot be longer than 50 characters and less than 10 characters")]
+        [StringLength(50, MinimumLength = 10, ErrorMessage = "Title cannot be longer than 50 characters and less than 10 characters")]
         public string Title { get; set; }
 
         [Required]
@@ -26,7 +26,7 @@ namespace Blog.Models.ViewModel
 
         public List<SelectListItem> Categories { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Please,choose a category for your post!")]
         public int[] CategoryIds { get; set; }
 
 
