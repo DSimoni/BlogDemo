@@ -1,0 +1,109 @@
+﻿
+@model  IEnumerable<Blog.Models.ViewModel.Post_CategoryViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+
+<ul class="nav navbar-nav navbar-right">
+    <li>
+        <a asp-action="Logout">Sign Out</a>
+    </li>
+</ul>
+
+<html>
+<head>
+    <title>Blogu</title>
+</head>
+<body>
+
+    <a asp-controller="Blog" asp-action="Post">Create a Post</a>
+
+    <h1 id="categoria"> </h1>
+
+    <select id="locality-dropdown" name="locality" onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);"></select>
+
+    <script type="text/javascript">
+
+        let dropdown = document.getElementById('locality-dropdown');
+        dropdown.length = 0;
+
+        let defaultOption = document.createElement('option');
+        defaultOption.text = 'Zgjidh Kategorine';
+
+        dropdown.add(defaultOption);
+        dropdown.selectedIndex = 0;
+
+        var url = '/Home/JSonCategories';
+
+        const request = new XMLHttpRequest();
+        
+        request.open('GET', url, true);
+        
+       
+        request.onload = function () {
+            if (request.status === 200) {
+                const data = JSON.parse(request.responseText);
+                let option;
+
+                var full_url = document.URL; // Get current url
+                var url_array = full_url.split('/') // Split the string into an array with / as separator
+                var last_segment = url_array[url_array.length - 1];  // Get the last part of the array (-1)
+
+                if (last_segment > 0) {
+                    document.getElementById("categoria").innerHTML = data[last_segment].name;
+                }
+
+
+                for (let i = 0; i < data.length; i++) {
+                    option = document.createElement('option');
+                    option.text = data[i].name;
+                    option.value = '/Home/Index/' + i;
+                    dropdown.add(option);
+
+                }
+
+            } else {
+                // Reached the server, but it returned an error
+            }
+        }
+
+        request.onerror = function () {
+            console.error('An error occurred fetching the JSON from ' + url);
+        };
+
+        request.send();
+
+
+    </script>
+    <br />
+    <br />
+    <div>
+
+        <table border="1">
+
+            @foreach (var row in Model)
+            {
+            <tr>
+
+                <th>@row.Title<br /></th>
+                <th>@row.Content<br /></th>
+                <th>
+                    <img src="~/images/@row.Image" />
+                    <br />
+                </th>
+                <th>@row.Date<br /></th>
+                <th>@row.Username<br /></th>
+                <th>@Html.ActionLink("Comment", "Comment", "Blog", new { id = row.Post_ID })</th>
+
+            </tr>
+            }
+        </table>
+    </div>
+
+
+</body>
+
+</html>

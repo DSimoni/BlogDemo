@@ -1,0 +1,101 @@
+﻿
+@model Blog.Models.ViewModel.Post_CategoryViewModel
+
+@{
+    ViewData["Title"] = "Comment";
+}
+
+
+
+<div>
+    
+    <hr />
+    <dl class="dl-horizontal">
+       
+        <dd>
+            <b> @Html.DisplayFor(model => model.Title) </b>
+        </dd>
+        
+        <dd>
+           <i> @Html.DisplayFor(model => model.Content) </i>
+        </dd>
+        
+        <dd>
+            <img src="~/images/@Html.DisplayFor(model =>model.Image)" width:200px; height:200px;" />
+
+        </dd>
+        
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+       
+        <dd>
+           Author: @Html.DisplayFor(model => model.Username)
+        </dd>
+    </dl>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        @using (Html.BeginForm("Comment", "Blog", FormMethod.Post, new { id = "form" }))
+    {
+        @Html.AntiForgeryToken()
+
+          <div class="editor-field">
+            @Html.TextAreaFor(model => model.Comment.Content, new {rows = 5, columns = 30, @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Comment.Content, "", new { @class = "text-danger" })
+        </div>
+           <p> @ViewBag.Error </p>
+            <script type="text/javascript">
+            if (data == "") {
+                var desc_text = "";
+                var placeholder = "Please describe why";
+                // If data IS saved in the database
+            }
+            else {
+                var desc_text = data;
+                var placeholder = "";
+            }
+
+        </script>
+    
+        <input type="submit" value="Add Comment" />
+        <div>
+            <ul id="comments" />
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script type="text/javascript">
+
+            var full_url = document.URL; // Get current url
+            var url_array = full_url.split('/') // Split the string into an array with / as separator
+            var last_segment = url_array[url_array.length-1];  // Get the last part of the array (-1)
+            
+
+            var uri = '/Blog/Comments/' + last_segment;
+            
+
+            $(document).ready(function () {
+                // Send an AJAX request
+                $.getJSON(uri)
+                    .done(function (data) {
+                        // On success, 'data' contains a list of products.
+                        $.each(data, function (key, item) {
+                            // Add a list item for the product.
+                            $('<li>', { text: formatItem(item) }).appendTo($('#comments'));
+                            $('<hr />').appendTo($('#comments'));
+                        });
+                    });
+            });
+
+            function formatItem(item) {
+                return item.username + ':' + item.content + ':' + item.created_Time;
+            }
+
+        </script>
+
+        }
+    </div>
+        </div>
+        <div>
+           <a asp-controller="Home" asp-action="Index">Back to Home</a>
+        </div>
